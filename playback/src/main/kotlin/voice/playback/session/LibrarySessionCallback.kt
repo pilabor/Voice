@@ -37,6 +37,7 @@ import voice.playback.session.button.KeyDownHandler
 import voice.playback.session.button.MediaButtonHandler
 import voice.playback.session.search.BookSearchHandler
 import voice.playback.session.search.BookSearchParser
+import kotlin.time.Duration.Companion.minutes
 
 @Inject
 class LibrarySessionCallback(
@@ -63,11 +64,16 @@ class LibrarySessionCallback(
     { player.stop() },
   )
 
+  private var wasPlayingBeforeSeek = false
+
   init {
     // configure available TAP / CLICK codes for mediaButtonHandler
     mediaButtonHandler.addClickAction(1) {
       Logger.d("1 click executed")
-      if(player.isPlaying) {
+      if(wasPlayingBeforeSeek) {
+        player.play()
+        wasPlayingBeforeSeek = false
+      } else if(player.isPlaying) {
         player.pause()
       } else {
         player.play()
@@ -75,19 +81,29 @@ class LibrarySessionCallback(
     }
     mediaButtonHandler.addClickAction(2) {
       Logger.d("2 clicks executed")
-      player.forceSeekToNext()
+      player.seekForward(5.minutes)
+      if(wasPlayingBeforeSeek) {
+        player.play()
+        wasPlayingBeforeSeek = false;
+      }
     }
     mediaButtonHandler.addClickAction(3) {
       Logger.d("3 clicks executed")
-      player.forceSeekToPrevious()
+      player.seekBack(5.minutes)
+      if(wasPlayingBeforeSeek) {
+        player.play()
+        wasPlayingBeforeSeek = false;
+      }
     }
     mediaButtonHandler.addClickAction(4) {
       Logger.d("4 clicks executed")
-      player.seekBack()
+      wasPlayingBeforeSeek = player.isPlaying
+      player.rewind()
     }
     mediaButtonHandler.addClickAction(5) {
       Logger.d("5 clicks executed")
-      player.seekForward()
+      wasPlayingBeforeSeek = player.isPlaying
+      player.fastForward()
     }
     /*
     // longPress actions would also be possible
