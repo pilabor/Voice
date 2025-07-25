@@ -28,6 +28,8 @@ import voice.playback.session.MediaId
 import voice.playback.session.MediaItemProvider
 import voice.playback.session.toMediaIdOrNull
 import java.time.Instant
+import kotlin.math.min
+import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.milliseconds
@@ -53,7 +55,7 @@ class VoicePlayer(
   var seekJob : Job? = null
   var isSeeking = false
 
-  fun forceSeekToNext() {
+  fun forceSeekToNext(maxOffset: Duration=0.milliseconds) {
     cancelSeekJob()
     scope.launch {
       val currentMediaItem = player.currentMediaItem ?: return@launch
@@ -63,7 +65,9 @@ class VoicePlayer(
       }
       val nextMark = marks.getOrNull(currentMarkIndex + 1)
       if (nextMark != null) {
-        player.seekTo(nextMark.startMs)
+        val seekToPosition = if(maxOffset == 0.milliseconds) nextMark.startMs else min(nextMark.startMs, currentPosition + maxOffset.inWholeMilliseconds)
+        Logger.d("theseeker: seekToPosition=$seekToPosition / nextMark.startMs=$nextMark.startMs")
+        player.seekTo(seekToPosition)
       } else {
         player.seekToNext()
       }
@@ -76,7 +80,7 @@ class VoicePlayer(
     return chapterRepo.get(mediaId.chapterId)
   }
 
-  fun forceSeekToPrevious() {
+  fun forceSeekToPrevious(maxOffset: Duration = 0.milliseconds) {
     cancelSeekJob()
     scope.launch {
       val currentMediaItem = player.currentMediaItem ?: return@launch
@@ -87,19 +91,33 @@ class VoicePlayer(
       } ?: marks.last()
 
       if (currentPosition - currentMark.startMs > THRESHOLD_FOR_BACK_SEEK_MS) {
-        player.seekTo(currentMark.startMs)
+        val seekToPosition = if(maxOffset <= 0.milliseconds) currentMark.startMs else max(currentMark.startMs, currentPosition - maxOffset.inWholeMilliseconds)
+        Logger.d("theseeker-prev: seekToPosition=$seekToPosition / currentMark.startMs=$currentMark.startMs")
+        player.seekTo(seekToPosition)
       } else {
         val currentMarkIndex = marks.indexOf(currentMark)
         val previousMark = marks.getOrNull(currentMarkIndex - 1)
         if (previousMark != null) {
-          player.seekTo(previousMark.startMs)
+          val seekToPosition = if(maxOffset <= 0.milliseconds) previousMark.startMs else max(previousMark.startMs, currentPosition - maxOffset.inWholeMilliseconds)
+          Logger.d("theseeker-prev: seekToPosition=$seekToPosition / previousMark.startMs=$previousMark.startMs")
+          player.seekTo(seekToPosition)
         } else {
+          Logger.d("theseeker-prev: else")
+
           val currentMediaItemIndex = player.currentMediaItemIndex
           if (currentMediaItemIndex > 0) {
             val previousMediaItemIndex = currentMediaItemIndex - 1
             val previousMediaItemMarks = player.getMediaItemAt(previousMediaItemIndex).chapter()?.chapterMarks
               ?: return@launch
-            player.seekTo(previousMediaItemIndex, previousMediaItemMarks.last().startMs)
+
+            val lastPreviousMediaItemMark = previousMediaItemMarks.last()
+            val played = currentPosition - lastPreviousMediaItemMark.endMs
+            val maxOffsetRemaining = maxOffset - played.milliseconds
+            val normalizedOffset = lastPreviousMediaItemMark.endMs - maxOffsetRemaining.inWholeMilliseconds
+            Logger.d("theseeker-prev: played=$played, maxOffsetRemaining=$maxOffsetRemaining, rest: $normalizedOffset")
+            val seekToPosition = if(maxOffset <= 0.milliseconds) lastPreviousMediaItemMark.startMs else max(lastPreviousMediaItemMark.startMs, normalizedOffset)
+
+            player.seekTo(previousMediaItemIndex, seekToPosition)
           } else {
             player.seekTo(0)
           }
@@ -190,8 +208,6 @@ class VoicePlayer(
     }
   }
   fun seekForward(skipAmount: Duration) {
-    cancelSeekJob()
-
     val currentPosition = player.currentPosition.takeUnless { it == C.TIME_UNSET }
       ?.milliseconds
       ?.coerceAtLeast(ZERO)
@@ -215,8 +231,11 @@ class VoicePlayer(
     cancelSeekJob()
     seekJob = scope.launch {
       isSeeking = true
+      val duration = player.duration.takeUnless { it == C.TIME_UNSET }
+        ?.milliseconds
+        ?: return@launch
       val isPlaying = player.isPlaying
-      while(player.currentPosition < player.duration) {
+      while(player.currentPosition < duration.inWholeMilliseconds) {
         seekForward(10.seconds - seekPlayBufferTime)
         playWithoutCancel()
         delay(seekPlayBufferTime)
@@ -233,8 +252,8 @@ class VoicePlayer(
   fun rewind() {
     cancelSeekJob()
     seekJob = scope.launch {
-      val isPlaying = player.isPlaying
       isSeeking = true
+      val isPlaying = player.isPlaying
       while(player.currentPosition > 0) {
         suspendSeekBack(10.seconds + seekPlayBufferTime)
         playWithoutCancel()
@@ -407,4 +426,4 @@ class VoicePlayer(
   }
 }
 
-private const val THRESHOLD_FOR_BACK_SEEK_MS = 2000
+private const val THRESHOLD_FOR_BACK_SEEK_MS = 3000

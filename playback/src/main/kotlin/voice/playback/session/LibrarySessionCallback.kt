@@ -81,7 +81,7 @@ class LibrarySessionCallback(
     }
     mediaButtonHandler.addClickAction(2) {
       Logger.d("2 clicks executed")
-      player.seekForward(5.minutes)
+      player.forceSeekToNext(5.minutes)
       if(wasPlayingBeforeSeek) {
         player.play()
         wasPlayingBeforeSeek = false;
@@ -89,7 +89,7 @@ class LibrarySessionCallback(
     }
     mediaButtonHandler.addClickAction(3) {
       Logger.d("3 clicks executed")
-      player.seekBack(5.minutes)
+      player.forceSeekToPrevious(5.minutes)
       if(wasPlayingBeforeSeek) {
         player.play()
         wasPlayingBeforeSeek = false;
@@ -130,7 +130,6 @@ class LibrarySessionCallback(
       playerNotificationService.seekBackward(15.seconds.inWholeMilliseconds)
     }
      */
-
   }
 
 
