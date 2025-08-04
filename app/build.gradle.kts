@@ -199,8 +199,11 @@ dependencies {
   implementation(libs.leakcanary.plumber)
   debugImplementation(libs.leakcanary.android)
 
-  implementation(libs.media3.exoplayer)
-  implementation(libs.media3.session)
+//   implementation(libs.media3.exoplayer)
+//   implementation(libs.media3.session)
+  implementation(project(":media3-lib-exoplayer"))
+  implementation(project(":media3-lib-session"))
+  // implementation(project(":media3-lib-ui"))
 
   implementation(libs.conductor)
 
@@ -217,6 +220,8 @@ dependencies {
   androidTestImplementation(libs.androidX.test.rules)
   androidTestImplementation(libs.androidX.test.junit)
   androidTestImplementation(libs.media3.testUtils.core)
+  // androidTestImplementation(project(":media3-lib-testUtils-core"))
+
   androidTestImplementation(libs.koTest.assert)
   androidTestImplementation(libs.androidX.test.services)
   androidTestImplementation(libs.coroutines.test)

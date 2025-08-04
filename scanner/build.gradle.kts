@@ -15,7 +15,8 @@ dependencies {
   implementation(libs.androidxCore)
   implementation(libs.documentFile)
   implementation(libs.datastore)
-  implementation(libs.media3.exoplayer)
+  // implementation(libs.media3.exoplayer)
+  implementation(project(":media3-lib-exoplayer"))
   implementation(libs.coroutines.guava)
 
   testImplementation(libs.junit)

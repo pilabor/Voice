@@ -69,3 +69,6 @@ include(":review:noop")
 include(":remoteconfig:core")
 include(":remoteconfig:firebase")
 include(":remoteconfig:noop")
+
+(gradle as ExtensionAware).extra["androidxMediaModulePrefix"] = "media3-"
+apply(from = file("/home/andreas/projects/media/core_settings.gradle"))
