@@ -37,7 +37,7 @@ class KeyDownHandler(
     // timerdelay has +100ms to regard the time of a release before a hold
     // sequence KEY_DOWN starts with handlerDelay, releasing takes 250ms and holding down takes 1000ms
     // so DOWN + UP + DOWN_AND_HOLD sequence may need 1250ms or even more
-    val timerDelay = if(holdActions.isEmpty()) handlerDelayWithoutHoldSupport else handlerDelay + holdEndedDelay
+    val timerDelay = handlerDelayWithoutHoldSupport // if(holdActions.isEmpty()) handlerDelayWithoutHoldSupport else handlerDelay + holdEndedDelay
     val isRepeatedEvent = keyEvent.repeatCount > 0
     val isFirstRepeatedEvent = isRepeatedEvent && firstRepeatCount == 0
     // only increase the clickCount on non-clickPressed events

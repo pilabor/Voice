@@ -15,7 +15,7 @@ abstract class AbstractMediaButtonHandler(
   ): MediaButtonHandler {
 
   override var handlerDelay = 1050.milliseconds
-  val handlerDelayWithoutHoldSupport = 650.milliseconds
+  val handlerDelayWithoutHoldSupport = 450.milliseconds
   var clickCount = 0
   var buttonReleasedJob: Job? = null
 

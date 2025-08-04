@@ -38,6 +38,7 @@ import voice.playback.session.button.MediaButtonHandler
 import voice.playback.session.search.BookSearchHandler
 import voice.playback.session.search.BookSearchParser
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Inject
 class LibrarySessionCallback(
@@ -69,7 +70,7 @@ class LibrarySessionCallback(
   init {
     // configure available TAP / CLICK codes for mediaButtonHandler
     mediaButtonHandler.addClickAction(1) {
-      Logger.d("1 click executed")
+      Logger.d("custom-action: 1 click executed")
       if(wasPlayingBeforeSeek) {
         player.play()
         wasPlayingBeforeSeek = false
@@ -80,7 +81,7 @@ class LibrarySessionCallback(
       }
     }
     mediaButtonHandler.addClickAction(2) {
-      Logger.d("2 clicks executed")
+      Logger.d("custom-action: 2 clicks executed")
       player.forceSeekToNext(5.minutes)
       if(wasPlayingBeforeSeek) {
         player.play()
@@ -88,13 +89,30 @@ class LibrarySessionCallback(
       }
     }
     mediaButtonHandler.addClickAction(3) {
-      Logger.d("3 clicks executed")
+      Logger.d("custom-action: 3 clicks executed")
       player.forceSeekToPrevious(5.minutes)
       if(wasPlayingBeforeSeek) {
         player.play()
         wasPlayingBeforeSeek = false;
       }
     }
+    mediaButtonHandler.addClickAction(4) {
+      Logger.d("custom-action: 4 clicks executed")
+      wasPlayingBeforeSeek = player.isPlaying
+      player.rewind()
+    }
+    mediaButtonHandler.addClickAction(5) {
+      Logger.d("custom-action: 5 clicks executed")
+      wasPlayingBeforeSeek = player.isPlaying
+      player.fastForward()
+    }
+
+    mediaButtonHandler.addHoldAction(0) {
+      Logger.d("custom-action: 0 clicks + hold executed");
+      player.seekBack(10.seconds)
+    }
+
+    /*
     mediaButtonHandler.addClickAction(4) {
       Logger.d("4 clicks executed")
       wasPlayingBeforeSeek = player.isPlaying
@@ -105,6 +123,8 @@ class LibrarySessionCallback(
       wasPlayingBeforeSeek = player.isPlaying
       player.fastForward()
     }
+
+     */
     /*
     // longPress actions would also be possible
     // - longPress will run the configured action repeatedly with a delay of 850ms unless the action is marked as "progressive" (like fastForward or rewind)

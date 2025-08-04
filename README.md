@@ -1,3 +1,10 @@
+- Force DB refresh: Folders added once cannot be removed from cache
+  - Remove app cache
+- Support for "movement" and "movementIndex/Part"
+- Support for "Every audio file is a book"
+  - `Audiobookshelf/Alexey Kovtunov, Oleg Sapphire/Der Weg des Heilers/6 - Der Weg des Heilers.m4b`
+
+
 Voice
 ![CI](https://github.com/PaulWoitaschek/Voice/actions/workflows/voice.yml/badge.svg?branch=main) <a href="https://hosted.weblate.org/engage/voice/">
 <img src="https://hosted.weblate.org/widgets/voice/-/svg-badge.svg" alt="Translation status" />
