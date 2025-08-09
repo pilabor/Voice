@@ -1,6 +1,7 @@
 package voice.app.scanner
 
 import dev.zacsweers.metro.Inject
+import kotlinx.collections.immutable.toImmutableList
 import voice.common.BookId
 import voice.data.audioFileCount
 import voice.data.folders.FolderType
@@ -31,6 +32,14 @@ class MediaScanner(
         }
         FolderType.Author -> {
           files.flatMap { folder ->
+
+            // folder.children
+            folder.walk().filter { it ->
+              it.isFile && it.name?.endsWith(".m4b") ?: false
+            }.toImmutableList()
+
+
+            /*
             folder.children.flatMap { author ->
               if (author.isFile) {
                 listOf(author)
@@ -40,6 +49,8 @@ class MediaScanner(
                 }
               }
             }
+
+             */
           }
         }
       }
@@ -58,6 +69,7 @@ class MediaScanner(
     files
       .sortedBy { it.audioFileCount() }
       .forEach { file ->
+
         scan(file)
       }
   }
@@ -70,6 +82,8 @@ class MediaScanner(
   }
 
   private suspend fun scan(file: CachedDocumentFile) {
+
+
     val chapters = chapterParser.parse(file)
     if (chapters.isEmpty()) return
 

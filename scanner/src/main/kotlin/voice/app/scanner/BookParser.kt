@@ -1,7 +1,9 @@
 package voice.app.scanner
 
 import android.app.Application
+import android.media.MediaMetadataRetriever
 import android.net.Uri
+import androidx.core.net.toFile
 import dev.zacsweers.metro.Inject
 import voice.common.BookId
 import voice.data.Book
@@ -17,6 +19,8 @@ import voice.documentfile.CachedDocumentFileFactory
 import voice.logging.core.Logger
 import java.io.File
 import java.time.Instant
+
+import java.io.RandomAccessFile
 
 @Inject
 class BookParser(
@@ -36,11 +40,27 @@ class BookParser(
     return contentRepo.getOrPut(id) {
       val uri = chapters.first().id.toUri()
       val analyzed = mediaAnalyzer.analyze(fileFactory.create(uri))
+
+
+
+
       val filePath = file.uri.filePath()
       val migrationMetaData = filePath?.let {
         legacyBookDao.bookMetaData()
           .find { metadata -> metadata.root.endsWith(it) }
       }
+
+      val movementName = analyzed?.series
+
+      var name = migrationMetaData?.name
+        ?: analyzed?.album
+        ?: analyzed?.title
+        ?: file.bookName()
+
+      if(!movementName.isNullOrBlank()) {
+        name += "$movementName: $name"
+      }
+
       val migrationSettings = migrationMetaData?.let {
         legacyBookDao.settingsById(it.id)
       }
@@ -50,7 +70,6 @@ class BookParser(
       }
 
       val migratedPlaybackPosition = migrationSettings?.let { findMigratedPlaybackPosition(it, chapters) }
-
       BookContent(
         id = id,
         isActive = true,
@@ -59,10 +78,7 @@ class BookParser(
         author = analyzed?.artist,
         lastPlayedAt = migrationSettings?.lastPlayedAtMillis?.let(Instant::ofEpochMilli)
           ?: Instant.EPOCH,
-        name = migrationMetaData?.name
-          ?: analyzed?.album
-          ?: analyzed?.title
-          ?: file.bookName(),
+        name = name,
         playbackSpeed = migrationSettings?.playbackSpeed
           ?: 1F,
         skipSilence = migrationSettings?.skipSilence
@@ -134,3 +150,68 @@ internal fun Uri.filePath(): String? {
     ?.dropWhile { it != ':' }
     ?.removePrefix(":")
 }
+/*
+
+private fun BookParser.parseMovementName(cachedFile:CachedDocumentFile):String {
+  val file = cachedFile.uri.toFile()
+
+  val raf = RandomAccessFile(file, "r")
+  return parseAtoms(raf)
+}
+
+fun parseAtoms(raf: RandomAccessFile):String {
+  var atomStartPos: Long
+  var atomSize: Int
+  var atomType: String
+
+  while (raf.filePointer < raf.length()) {
+    // Read the size of the atom (4 bytes)
+    atomSize = raf.readInt()
+
+    // Read the type of the atom (4 bytes)
+    val typeBytes = ByteArray(4)
+    raf.readFully(typeBytes)
+    atomType = String(typeBytes)
+
+    // Print the atom's size and type
+    // println("Found atom: $atomType, size: $atomSize")
+
+    // If the atom type is "moov", check its subatoms
+    if (atomType == "moov") {
+      val moovAtomStart = raf.filePointer
+      return parseMoovAtom(raf, moovAtomStart, atomSize)
+    } else {
+      // Skip the content of the atom
+      raf.seek(raf.filePointer + atomSize - 8)  // size - 8 to skip size and type bytes
+    }
+  }
+  return ""
+}
+
+fun parseMoovAtom(raf: RandomAccessFile, moovStart: Long, moovSize: Int):String {
+  val moovEnd = moovStart + moovSize
+  while (raf.filePointer < moovEnd) {
+    // Read atom size
+    val atomSize = raf.readInt()
+
+    // Read atom type (4 bytes)
+    val typeBytes = ByteArray(4)
+    raf.readFully(typeBytes)
+    val atomType = String(typeBytes)
+
+    // If we find the "©mvn" atom, process it
+    if (atomType == "©mvn") {
+      val mvnData = ByteArray(atomSize - 8)  // subtract size/type bytes
+      raf.readFully(mvnData)
+      // println("Found ©mvn atom with data: ${String(mvnData)}")
+      return String(mvnData)
+    } else {
+      // Skip the content of other atoms
+      raf.seek(raf.filePointer + atomSize - 8)
+    }
+
+  }
+
+  return ""
+}
+*/

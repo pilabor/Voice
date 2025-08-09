@@ -13,6 +13,7 @@ import voice.data.MarkData
 import voice.logging.core.Logger
 import java.io.IOException
 
+data class Mp4Metadata( var chapters: List<MarkData>, var series: String?=null)
 @Inject
 class Mp4ChapterExtractor(
   private val context: Context,
@@ -20,42 +21,57 @@ class Mp4ChapterExtractor(
   private val chapterTrackProcessor: ChapterTrackProcessor,
 ) {
 
-  suspend fun extractChapters(uri: Uri): List<MarkData> = withContext(Dispatchers.IO) {
+  /*
+  suspend fun extractMovementName(uri: Uri): String {
     val dataSource = DefaultDataSource.Factory(context).createDataSource()
 
+  }
+  */
+
+  suspend fun extractMetadata(uri: Uri): Mp4Metadata = withContext(Dispatchers.IO) {
+    val dataSource = DefaultDataSource.Factory(context).createDataSource()
+    val metadata = Mp4Metadata(listOf(), null)
     try {
-      dataSource.open(DataSpec(uri))
       val input = DefaultExtractorInput(dataSource, 0, C.LENGTH_UNSET.toLong())
       val topLevelResult = boxParser(input)
-      val trackId = topLevelResult.chapterTrackId
-      when {
-        topLevelResult.chplChapters.isNotEmpty() -> {
-          topLevelResult.chplChapters
+      metadata.series = topLevelResult.series
+      metadata.chapters = try {
+        dataSource.open(DataSpec(uri))
+        val trackId = topLevelResult.chapterTrackId
+        when {
+          topLevelResult.chplChapters.isNotEmpty() -> {
+            topLevelResult.chplChapters
+          }
+          trackId != null -> {
+            chapterTrackProcessor(uri, dataSource, trackId, topLevelResult)
+          }
+          else -> emptyList()
         }
-        trackId != null -> {
-          chapterTrackProcessor(uri, dataSource, trackId, topLevelResult)
-        }
-        else -> emptyList()
-      }
-    } catch (e: IOException) {
-      Logger.w(e, "Failed to open MP4 file for chapter extraction")
-      emptyList()
-    } catch (e: SecurityException) {
-      Logger.w(e, "Security exception while accessing MP4 file")
-      emptyList()
-    } catch (e: IllegalStateException) {
-      Logger.w(e, "Invalid MP4 structure")
-      emptyList()
-    } catch (e: ArrayIndexOutOfBoundsException) {
-      Logger.w(e, "Undeclared")
-      // https://github.com/androidx/media/issues/2467
-      emptyList()
-    } finally {
-      try {
-        dataSource.close()
       } catch (e: IOException) {
-        Logger.w(e, "Error closing data source")
+        Logger.w(e, "Failed to open MP4 file for chapter extraction")
+        emptyList()
+      } catch (e: SecurityException) {
+        Logger.w(e, "Security exception while accessing MP4 file")
+        emptyList()
+      } catch (e: IllegalStateException) {
+        Logger.w(e, "Invalid MP4 structure")
+        emptyList()
+      } catch (e: ArrayIndexOutOfBoundsException) {
+        Logger.w(e, "Undeclared")
+        // https://github.com/androidx/media/issues/2467
+        emptyList()
+      } finally {
+        try {
+          dataSource.close()
+        } catch (e: IOException) {
+          Logger.w(e, "Error closing data source")
+        }
       }
+    } catch(e:Exception) {
+      Logger.w(e, "Error")
     }
+
+
+    metadata
   }
 }

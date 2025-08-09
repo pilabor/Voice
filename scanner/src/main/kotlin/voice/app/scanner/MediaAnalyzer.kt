@@ -83,7 +83,7 @@ class MediaAnalyzer(
     val fileType = FileTypes.inferFileTypeFromUri(file.uri)
     val extension = (file.name ?: "").substringAfterLast(delimiter = ".", missingDelimiterValue = "").lowercase()
     if (fileType == FileTypes.MP4 || extension == "mp4" || extension == "m4a" || extension == "m4b") {
-      parseMp4Chapters(file, builder)
+      parseMp4SpecificMetadata(file, builder)
     }
     if (fileType == FileTypes.MATROSKA || extension == "mka" || extension == "mkv") {
       parseMatroskaMetaData(file, builder)
@@ -109,12 +109,13 @@ class MediaAnalyzer(
     }
   }
 
-  private suspend fun parseMp4Chapters(
+  private suspend fun parseMp4SpecificMetadata(
     file: CachedDocumentFile,
     builder: Metadata.Builder,
   ) {
-    val chapters = mp4ChapterExtractor.extractChapters(file.uri)
-    builder.chapters += chapters
+    val metadata = mp4ChapterExtractor.extractMetadata(file.uri)
+    builder.chapters += metadata.chapters
+    builder.series = metadata.series
   }
 
   private fun visitMdta(

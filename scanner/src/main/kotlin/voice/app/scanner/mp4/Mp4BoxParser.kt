@@ -78,6 +78,14 @@ class Mp4BoxParser(
       val currentPath = path + atomType
       Logger.d("Current path: $currentPath, atomType: $atomType")
 
+/*
+      if(atomType == "©mvn" && input.readFully(scratch.data, 0, payloadSize, true)) {
+        val buffer = scratch
+        val titleLength = buffer.readUnsignedByte()
+        parseOutput.series = buffer.readString(titleLength)
+      }
+*/
+
       val visitor = visitorByPath[currentPath]
 
       when {
