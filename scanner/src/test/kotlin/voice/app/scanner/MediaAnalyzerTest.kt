@@ -20,6 +20,7 @@ import voice.app.scanner.mp4.Mp4BoxParser
 import voice.app.scanner.mp4.Mp4ChapterExtractor
 import voice.app.scanner.mp4.visitor.ChapVisitor
 import voice.app.scanner.mp4.visitor.ChplVisitor
+import voice.app.scanner.mp4.visitor.MetaVisitor
 import voice.app.scanner.mp4.visitor.MdhdVisitor
 import voice.app.scanner.mp4.visitor.StcoVisitor
 import voice.app.scanner.mp4.visitor.StscVisitor
@@ -49,6 +50,7 @@ internal class MediaAnalyzerTest {
         stcoVisitor = StcoVisitor(),
         chplVisitor = ChplVisitor(),
         chapVisitor = ChapVisitor(),
+        metaVisitor = MetaVisitor(),
       ),
       chapterTrackProcessor = ChapterTrackProcessor(),
     ),

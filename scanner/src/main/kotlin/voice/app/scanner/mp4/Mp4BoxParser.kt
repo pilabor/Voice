@@ -6,6 +6,7 @@ import androidx.media3.extractor.ExtractorInput
 import dev.zacsweers.metro.Inject
 import voice.app.scanner.mp4.visitor.ChapVisitor
 import voice.app.scanner.mp4.visitor.ChplVisitor
+import voice.app.scanner.mp4.visitor.MetaVisitor
 import voice.app.scanner.mp4.visitor.MdhdVisitor
 import voice.app.scanner.mp4.visitor.StcoVisitor
 import voice.app.scanner.mp4.visitor.StscVisitor
@@ -20,6 +21,7 @@ class Mp4BoxParser(
   stcoVisitor: StcoVisitor,
   chplVisitor: ChplVisitor,
   chapVisitor: ChapVisitor,
+  metaVisitor: MetaVisitor
 ) {
 
   private val visitors = listOf(
@@ -29,6 +31,7 @@ class Mp4BoxParser(
     stcoVisitor,
     chplVisitor,
     chapVisitor,
+    metaVisitor
   )
   private val visitorByPath = visitors.associateBy { it.path }
 
