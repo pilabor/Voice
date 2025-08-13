@@ -13,6 +13,7 @@ import voice.data.MarkData
 import voice.logging.core.Logger
 import java.io.IOException
 
+data class Mp4Metadata(val movementName:String?, val chapters: List<MarkData>)
 @Inject
 class Mp4ChapterExtractor(
   private val context: Context,
@@ -20,15 +21,16 @@ class Mp4ChapterExtractor(
   private val chapterTrackProcessor: ChapterTrackProcessor,
 ) {
 
-  suspend fun extractChapters(uri: Uri): List<MarkData> = withContext(Dispatchers.IO) {
+  suspend fun extractMp4Metadata(uri: Uri): Mp4Metadata = withContext(Dispatchers.IO) {
     val dataSource = DefaultDataSource.Factory(context).createDataSource()
+    dataSource.open(DataSpec(uri))
 
     try {
-      dataSource.open(DataSpec(uri))
       val input = DefaultExtractorInput(dataSource, 0, C.LENGTH_UNSET.toLong())
       val topLevelResult = boxParser(input)
+
       val trackId = topLevelResult.chapterTrackId
-      when {
+      val chapters = when {
         topLevelResult.chplChapters.isNotEmpty() -> {
           topLevelResult.chplChapters
         }
@@ -37,19 +39,17 @@ class Mp4ChapterExtractor(
         }
         else -> emptyList()
       }
+
+      Mp4Metadata(topLevelResult.movementName, chapters)
     } catch (e: IOException) {
       Logger.w(e, "Failed to open MP4 file for chapter extraction")
-      emptyList()
     } catch (e: SecurityException) {
       Logger.w(e, "Security exception while accessing MP4 file")
-      emptyList()
     } catch (e: IllegalStateException) {
       Logger.w(e, "Invalid MP4 structure")
-      emptyList()
     } catch (e: ArrayIndexOutOfBoundsException) {
       Logger.w(e, "Undeclared")
       // https://github.com/androidx/media/issues/2467
-      emptyList()
     } finally {
       try {
         dataSource.close()
@@ -57,5 +57,11 @@ class Mp4ChapterExtractor(
         Logger.w(e, "Error closing data source")
       }
     }
+    Mp4Metadata("", emptyList())
+  }
+
+
+  suspend fun extractChapters(uri: Uri): List<MarkData> = withContext(Dispatchers.IO) {
+      extractMp4Metadata(uri).chapters
   }
 }
