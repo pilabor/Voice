@@ -14,8 +14,9 @@ class LibraryPlugin : Plugin<Project> {
         target.tasks.withType(Test::class.java).configureEach {
           // We want all modules to be configured for tests, for the
           // voiceUnitTest to work
-          failOnNoDiscoveredTests.set(false)
+          // failOnNoDiscoveredTests.set(false)
         }
+        
         target.tasks.register("voiceUnitTest") {
           dependsOn("testDebugUnitTest")
         }

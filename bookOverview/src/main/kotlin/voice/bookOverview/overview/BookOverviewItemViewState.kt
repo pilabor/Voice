@@ -15,6 +15,8 @@ data class BookOverviewItemViewState(
   val progress: Float,
   val id: BookId,
   val remainingTime: String,
+  val movementName: String?,
+  val part: String?
 )
 
 internal fun Book.toItemViewState() = BookOverviewItemViewState(
@@ -24,6 +26,8 @@ internal fun Book.toItemViewState() = BookOverviewItemViewState(
   id = id,
   progress = progress(),
   remainingTime = DateUtils.formatElapsedTime((duration - position) / 1000),
+  movementName = content.movementName,
+  part = content.part
 )
 
 private fun Book.progress(): Float {

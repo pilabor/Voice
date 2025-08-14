@@ -75,7 +75,9 @@ class BookParser(
             .takeIf { it.canRead() }
         },
         gain = 0F,
-      ).also {
+        movementName=analyzed?.movementName,
+        part = analyzed?.part
+        ).also {
         validateIntegrity(it, chapters)
       }
     }

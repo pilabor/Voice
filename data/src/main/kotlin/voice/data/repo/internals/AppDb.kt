@@ -37,6 +37,7 @@ import voice.data.repo.internals.dao.RecentBookSearchDao
     AutoMigration(from = 52, to = 53),
     AutoMigration(from = 54, to = 55),
     AutoMigration(from = 55, to = 56),
+
   ],
 )
 @TypeConverters(Converters::class)

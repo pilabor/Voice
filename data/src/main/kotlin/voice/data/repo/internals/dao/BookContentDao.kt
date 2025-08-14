@@ -42,3 +42,4 @@ data class BookSearchFts(
   val id: BookId,
   val isActive: Boolean,
 )
+// todo: movementName, part, narrator,

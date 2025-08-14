@@ -112,6 +112,13 @@ internal fun ListBookRow(
               .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
               .align(Alignment.CenterVertically),
           ) {
+            if(!book.movementName.isNullOrBlank()) {
+              Text(
+                text = book.movementName,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+              )
+            }
             if (book.author != null) {
               Text(
                 text = book.author.toUpperCase(LocaleList.current),

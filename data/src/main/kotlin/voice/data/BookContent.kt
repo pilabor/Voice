@@ -25,7 +25,11 @@ data class BookContent(
   val cover: File?,
   @ColumnInfo(defaultValue = "0")
   val gain: Float,
-) {
+  @ColumnInfo(defaultValue = "")
+  val movementName: String?,
+  @ColumnInfo(defaultValue = "")
+  val part: String?,
+  ) {
 
   @Ignore
   val currentChapterIndex = chapters.indexOf(currentChapter)

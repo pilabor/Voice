@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 56,
-    "identityHash": "f71db09ceebbff2c448c04a3e003ec6c",
+    "identityHash": "55125b2fc3d43e99d4304127df67752f",
     "entities": [
       {
         "tableName": "bookmark",
@@ -17,8 +17,7 @@
           {
             "fieldPath": "title",
             "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "time",
@@ -46,13 +45,11 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "chapters",
@@ -102,10 +99,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
@@ -117,8 +114,7 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_chapters_bookId` ON `${TABLE_NAME}` (`bookId`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "bookMetaData",
@@ -139,8 +135,7 @@
           {
             "fieldPath": "author",
             "columnName": "author",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "name",
@@ -162,13 +157,11 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "bookSettings",
@@ -224,13 +217,11 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "chapters2",
@@ -245,8 +236,7 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "duration",
@@ -268,17 +258,15 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "content2",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playbackSpeed` REAL NOT NULL, `skipSilence` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, `lastPlayedAt` TEXT NOT NULL, `author` TEXT, `name` TEXT NOT NULL, `addedAt` TEXT NOT NULL, `chapters` TEXT NOT NULL, `currentChapter` TEXT NOT NULL, `positionInChapter` INTEGER NOT NULL, `cover` TEXT, `gain` REAL NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playbackSpeed` REAL NOT NULL, `skipSilence` INTEGER NOT NULL, `isActive` INTEGER NOT NULL, `lastPlayedAt` TEXT NOT NULL, `author` TEXT, `name` TEXT NOT NULL, `addedAt` TEXT NOT NULL, `chapters` TEXT NOT NULL, `currentChapter` TEXT NOT NULL, `positionInChapter` INTEGER NOT NULL, `cover` TEXT, `gain` REAL NOT NULL DEFAULT 0, `movementName` TEXT DEFAULT '', `part` TEXT DEFAULT '', PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -313,8 +301,7 @@
           {
             "fieldPath": "author",
             "columnName": "author",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "name",
@@ -349,8 +336,7 @@
           {
             "fieldPath": "cover",
             "columnName": "cover",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "gain",
@@ -358,16 +344,26 @@
             "affinity": "REAL",
             "notNull": true,
             "defaultValue": "0"
+          },
+          {
+            "fieldPath": "movementName",
+            "columnName": "movementName",
+            "affinity": "TEXT",
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "part",
+            "columnName": "part",
+            "affinity": "TEXT",
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
         "tableName": "bookmark2",
@@ -388,8 +384,7 @@
           {
             "fieldPath": "title",
             "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "time",
@@ -417,15 +412,44 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       },
       {
+        "tableName": "bookSearchFts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `author` TEXT, `id` TEXT NOT NULL, `isActive` INTEGER NOT NULL, tokenize=unicode61, content=`content2`, notindexed=`id`, notindexed=`isActive`)",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "isActive",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
         "ftsVersion": "FTS4",
         "ftsOptions": {
           "tokenizer": "unicode61",
@@ -445,41 +469,7 @@
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_BEFORE_DELETE BEFORE DELETE ON `content2` BEGIN DELETE FROM `bookSearchFts` WHERE `docid`=OLD.`rowid`; END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_UPDATE AFTER UPDATE ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`id`, NEW.`isActive`); END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_INSERT AFTER INSERT ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`id`, NEW.`isActive`); END"
-        ],
-        "tableName": "bookSearchFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `author` TEXT, `id` TEXT NOT NULL, `isActive` INTEGER NOT NULL, tokenize=unicode61, content=`content2`, notindexed=`id`, notindexed=`isActive`)",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "author",
-            "columnName": "author",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isActive",
-            "columnName": "isActive",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "recentBookSearch",
@@ -493,19 +483,16 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "searchTerm"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
+          ]
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f71db09ceebbff2c448c04a3e003ec6c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '55125b2fc3d43e99d4304127df67752f')"
     ]
   }
 }
