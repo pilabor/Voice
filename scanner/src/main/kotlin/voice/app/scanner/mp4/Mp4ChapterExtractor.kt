@@ -24,7 +24,7 @@ class Mp4ChapterExtractor(
   suspend fun extractMp4Metadata(uri: Uri): Mp4Metadata = withContext(Dispatchers.IO) {
     val dataSource = DefaultDataSource.Factory(context).createDataSource()
     dataSource.open(DataSpec(uri))
-
+    var m = Mp4Metadata("", emptyList())
     try {
       val input = DefaultExtractorInput(dataSource, 0, C.LENGTH_UNSET.toLong())
       val topLevelResult = boxParser(input)
@@ -40,7 +40,7 @@ class Mp4ChapterExtractor(
         else -> emptyList()
       }
 
-      Mp4Metadata(topLevelResult.movementName, chapters)
+      m = Mp4Metadata(topLevelResult.movementName, chapters)
     } catch (e: IOException) {
       Logger.w(e, "Failed to open MP4 file for chapter extraction")
     } catch (e: SecurityException) {
@@ -57,7 +57,7 @@ class Mp4ChapterExtractor(
         Logger.w(e, "Error closing data source")
       }
     }
-    Mp4Metadata("", emptyList())
+    m
   }
 
 

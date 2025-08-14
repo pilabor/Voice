@@ -1,10 +1,8 @@
 package voice.app.scanner.mp4.visitor
 
 import androidx.media3.common.util.ParsableByteArray
-import okio.ByteString.Companion.toByteString
+import dev.zacsweers.metro.Inject
 import voice.app.scanner.mp4.Mp4ChpaterExtractorOutput
-import java.nio.ByteBuffer
-import kotlin.reflect.typeOf
 
 data class MetaAtom(val name:String,val position:Int, val size: Int) {
   val end: Int
@@ -13,7 +11,7 @@ data class MetaAtom(val name:String,val position:Int, val size: Int) {
 }
 
 
-
+@Inject
 class MetaVisitor : AtomVisitor {
   override val path: List<String> = listOf("moov", "udta", "meta")
 
@@ -163,7 +161,7 @@ class MetaVisitor : AtomVisitor {
   }
 
   private fun parseDataAtomString(buffer: ParsableByteArray, size:Int): String? {
-    return buffer.readString(size, Charsets.ISO_8859_1)
+    return buffer.readString(size, Charsets.ISO_8859_1).trim()
   }
 
   private fun isAtomNameSupported(atomName: String): Boolean {

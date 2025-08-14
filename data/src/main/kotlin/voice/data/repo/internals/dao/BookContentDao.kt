@@ -39,6 +39,7 @@ interface BookContentDao {
 data class BookSearchFts(
   val name: String,
   val author: String?,
+  val movementName: String?,
   val id: BookId,
   val isActive: Boolean,
 )

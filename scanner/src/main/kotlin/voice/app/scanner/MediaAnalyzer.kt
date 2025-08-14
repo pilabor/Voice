@@ -103,12 +103,18 @@ class MediaAnalyzer(
     }
   }
 
+
   private suspend fun parseMp4Chapters(
     file: CachedDocumentFile,
     builder: Metadata.Builder,
   ) {
-    val chapters = mp4ChapterExtractor.extractChapters(file.uri)
-    builder.chapters += chapters
+    val metadata = mp4ChapterExtractor.extractMp4Metadata(file.uri)
+    builder.chapters += metadata.chapters
+    builder.movementName = metadata.movementName
+    // todo
+    // builder.part = metadata.part
+    // builder.genre = metadata.genre
+
   }
 
   private fun visitMdta(
