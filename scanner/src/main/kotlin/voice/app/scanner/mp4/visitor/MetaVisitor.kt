@@ -127,6 +127,10 @@ class MetaVisitor : AtomVisitor {
     if(!genre.isNullOrBlank()) {
       parseOutput.genre = genre
     }
+
+    if(!movementIndex.isNullOrBlank()) {
+      parseOutput.part = movementIndex
+    }
     buffer.position = positionBeforeParsing
   }
 
@@ -166,27 +170,38 @@ class MetaVisitor : AtomVisitor {
       nameField -> name = parseDataAtomString(buffer, size)
       titleField -> title = parseDataAtomString(buffer, size)
       genreField -> genre = parseDataAtomString(buffer, size)
-      genreField2 -> genre = parseDataAtomString(buffer, size)
+      // genreField2 -> genre = parseDataAtomString(buffer, size) // uint8 genreID, needs mapping table
       movementNameField -> movementName = parseDataAtomString(buffer, size)
-      movementIndexField -> movementIndex = parseDataAtomInt(buffer)?.toString()
+      movementIndexField -> movementIndex = parseDataAtomUnsignedByte(buffer).toString()
       customField -> parseCustomField(buffer, size)
     }
   }
 
-
-
-
-  private fun parseDataAtomInt(buffer: ParsableByteArray): Int? {
+  private fun parseDataAtomUnsignedByte(buffer: ParsableByteArray): Int {
     parseFlags(buffer)
-    var value = buffer.readInt().reverseBytes()
-    return value
+    val value = buffer.readUnsignedByte()
+    return value;
   }
 
   private fun parseCustomField(buffer: ParsableByteArray, size: Int) {
-    parseFlags(buffer)
-    val x = buffer.readString(size - 8)
+    // val bufferStartPos = buffer.position
 
-    val y = "y"
+
+    // buffer.position = bufferStartPos
+    // parseFlags(buffer)
+    val nameSpace = buffer.readString(size)
+    val propertyNameWidth = buffer.readInt()
+    val propertyName = buffer.readString(propertyNameWidth - 4).substring(4)
+    val propertyValueWidth = buffer.readInt()
+    val dataAtom = buffer.readString(4)
+    parseFlags(buffer)
+    val dataAtomSize = propertyValueWidth - 16; // buffer.readInt()
+    val dataAtomValue = buffer.readString(dataAtomSize )
+
+    when(propertyName) {
+      "PART" -> movementIndex = dataAtomValue
+      "SERIES" ->  movementName = dataAtomValue
+    }
   }
 
   private fun parseDataAtomString(buffer: ParsableByteArray, size:Int): String? {
