@@ -79,6 +79,9 @@ class Mp4BoxParser(
       val payloadSize = (atomSize - headerSize).toInt()
       val payloadEnd = input.position + payloadSize
       val currentPath = path + atomType
+
+      // val cp = currentPath.joinToString(" / ")
+
       Logger.d("Current path: $currentPath, atomType: $atomType")
 
       val visitor = visitorByPath[currentPath]
@@ -93,7 +96,8 @@ class Mp4BoxParser(
           visitor.visit(scratch, parseOutput)
 
           if (parseOutput.chplChapters.isNotEmpty()) {
-            return
+            // in case of multiple visitors matching the same path we need to continue, not return
+            continue
           }
         }
 
@@ -107,7 +111,8 @@ class Mp4BoxParser(
           )
 
           if (parseOutput.chplChapters.isNotEmpty()) {
-            return
+            // in case of multiple visitors matching the same path we need to continue, not return
+            continue
           }
         }
 

@@ -150,7 +150,7 @@ internal fun ListBookRow(
 }
 
 private fun buildSeriesLine(book: BookOverviewItemViewState) : String? {
-  return listOf(book.movementName, "#${book.part}".trim().trimEnd('#')).filter { it -> !it.isNullOrBlank() }.joinToString(" ")
+  return listOf(book.movementName, "#${book.part ?: ""}".trim().trimEnd('#')).filter { it -> !it.isNullOrBlank() }.joinToString(" ")
 }
 
 @Composable

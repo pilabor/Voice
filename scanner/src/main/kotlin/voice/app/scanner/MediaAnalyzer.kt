@@ -114,8 +114,6 @@ class MediaAnalyzer(
     builder.narrator = metadata.narrator
     builder.movementName = metadata.movementName
     builder.part = metadata.part
-
-
   }
 
   private fun visitMdta(

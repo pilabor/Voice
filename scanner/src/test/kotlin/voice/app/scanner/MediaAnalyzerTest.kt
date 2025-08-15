@@ -141,7 +141,7 @@ internal class MediaAnalyzerTest {
 
   @Test
   fun metaVisitor() {
-    parse("meta_visitor.m4b")
+    parse("meta_visitor_2.m4b")
   }
 
   @Test

@@ -6,15 +6,6 @@ import voice.app.scanner.mp4.Mp4ChpaterExtractorOutput
 import voice.logging.core.Logger
 import java.nio.ByteBuffer
 
-// import java.nio.ByteBuffer
-
-fun Int.reverseBytes(): Int {
-  val v0 = ((this ushr 0) and 0xFF)
-  val v1 = ((this ushr 8) and 0xFF)
-  val v2 = ((this ushr 16) and 0xFF)
-  val v3 = ((this ushr 24) and 0xFF)
-  return (v0 shl 24) or (v1 shl 16) or (v2 shl 8) or (v3 shl 0)
-}
 
 data class MetaAtom(val name:String,val position:Int, val size: Int) {
   val end: Int
