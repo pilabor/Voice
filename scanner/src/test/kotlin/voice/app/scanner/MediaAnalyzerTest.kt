@@ -140,6 +140,11 @@ internal class MediaAnalyzerTest {
   }
 
   @Test
+  fun metaVisitor() {
+    parse("meta_visitor.m4b")
+  }
+
+  @Test
   fun chapterTrackId() {
     val chapters = parse("chapter_track_id.m4b")
       .shouldNotBeNull()

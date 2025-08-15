@@ -112,9 +112,10 @@ internal fun ListBookRow(
               .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
               .align(Alignment.CenterVertically),
           ) {
-            if(!book.movementName.isNullOrBlank()) {
+            val seriesLine = buildSeriesLine(book)
+            if(!seriesLine.isNullOrBlank()) {
               Text(
-                text = book.movementName,
+                text = seriesLine,
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
               )
@@ -146,6 +147,10 @@ internal fun ListBookRow(
       }
     },
   )
+}
+
+private fun buildSeriesLine(book: BookOverviewItemViewState) : String? {
+  return listOf(book.part, book.movementName).filter { it -> !it.isNullOrBlank() }.joinToString(" - ")
 }
 
 @Composable

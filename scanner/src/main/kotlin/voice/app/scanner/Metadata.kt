@@ -10,8 +10,8 @@ data class Metadata(
   val title: String?,
   val fileName: String,
   val chapters: List<MarkData>,
-  val movementName: String?,
-  val part: String?
+  val movementName: String? = null,
+  val part: String? = null
 ) {
 
   internal class Builder(val fileName: String) {

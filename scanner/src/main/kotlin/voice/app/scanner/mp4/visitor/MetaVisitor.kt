@@ -3,6 +3,17 @@ package voice.app.scanner.mp4.visitor
 import androidx.media3.common.util.ParsableByteArray
 import dev.zacsweers.metro.Inject
 import voice.app.scanner.mp4.Mp4ChpaterExtractorOutput
+import java.nio.ByteBuffer
+
+// import java.nio.ByteBuffer
+
+fun Int.reverseBytes(): Int {
+  val v0 = ((this ushr 0) and 0xFF)
+  val v1 = ((this ushr 8) and 0xFF)
+  val v2 = ((this ushr 16) and 0xFF)
+  val v3 = ((this ushr 24) and 0xFF)
+  return (v0 shl 24) or (v1 shl 16) or (v2 shl 8) or (v3 shl 0)
+}
 
 data class MetaAtom(val name:String,val position:Int, val size: Int) {
   val end: Int
@@ -10,7 +21,7 @@ data class MetaAtom(val name:String,val position:Int, val size: Int) {
   val children = mutableListOf<MetaAtom>()
 }
 
-
+// https://atomicparsley.sourceforge.net/mpeg-4files.html
 @Inject
 class MetaVisitor : AtomVisitor {
   override val path: List<String> = listOf("moov", "udta", "meta")
@@ -50,6 +61,7 @@ class MetaVisitor : AtomVisitor {
   val encodedByField = "©enc"
   val encodingToolField = "©too"
   val isrcField = "©isr"
+  val customField = "----"
   /*
   todo
   { "LANGUAGE", Field.LANGUAGE }, // aka ----:com.apple.iTunes:LANGUAGE
@@ -133,9 +145,7 @@ class MetaVisitor : AtomVisitor {
       */
       val atomName = buffer.readString(4, Charsets.ISO_8859_1)
       val subAtom = MetaAtom(atomName, position, atomSize)
-
       extractMetaDataField(buffer, parentAtom, atomSize-8)
-
 
 
       if(atomSize > 0 && isAtomNameSupported(atomName) && subAtom.end <= parentAtom.end) {
@@ -149,19 +159,65 @@ class MetaVisitor : AtomVisitor {
   private fun extractMetaDataField(
     buffer: ParsableByteArray,
     parentAtom: MetaAtom,
-    size: Int
+    size: Int,
   ) {
+    // parentAtom is named and has a data field
     when (parentAtom.name) {
       nameField -> name = parseDataAtomString(buffer, size)
       titleField -> title = parseDataAtomString(buffer, size)
       genreField -> genre = parseDataAtomString(buffer, size)
       genreField2 -> genre = parseDataAtomString(buffer, size)
       movementNameField -> movementName = parseDataAtomString(buffer, size)
+      movementIndexField -> movementIndex = parseDataAtomInt(buffer)?.toString()
+      customField -> parseCustomField(buffer, size)
     }
   }
 
+
+
+
+  private fun parseDataAtomInt(buffer: ParsableByteArray): Int? {
+    parseFlags(buffer)
+    var value = buffer.readInt().reverseBytes()
+    return value
+  }
+
+  private fun parseCustomField(buffer: ParsableByteArray, size: Int) {
+    parseFlags(buffer)
+    val x = buffer.readString(size - 8)
+
+    val y = "y"
+  }
+
   private fun parseDataAtomString(buffer: ParsableByteArray, size:Int): String? {
-    return buffer.readString(size, Charsets.ISO_8859_1).trim()
+    parseFlags(buffer)
+    val value = buffer.readString(size - 8/*, Charsets.ISO_8859_1*/)
+    return value
+  }
+
+
+  private fun parseFlags(buffer: ParsableByteArray): Int {
+    val byteBuffer = ByteBuffer.allocate(4)
+    buffer.readBytes(byteBuffer, 4)
+    val byteArray = byteBuffer.array()
+
+    // val version = bytesToInt(byteArray, 0, 1)
+    // 0=uint8
+    // 1=text
+    // 21=uint8
+    val flags = bytesToInt(byteArray, 1, 3)
+    // skip null space
+    buffer.position += 4
+    return flags
+  }
+
+  private fun bytesToInt(byteArray: ByteArray, offset: Int, length: Int): Int {
+    val bytes = byteArray.drop(offset).take(length)
+    var value = 0
+    for (b in bytes) {
+      value = (value shl 8) + (b.toInt() and 0xFF)
+    }
+    return value
   }
 
   private fun isAtomNameSupported(atomName: String): Boolean {

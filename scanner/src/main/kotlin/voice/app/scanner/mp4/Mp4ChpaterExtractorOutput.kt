@@ -10,6 +10,7 @@ data class Mp4ChpaterExtractorOutput(
   var chplChapters: List<MarkData> = emptyList(),
   var chapterTrackId: Int? = null,
   var movementName: String? = null,
+  var part: String? = null,
   var genre: String? = null
 )
 
