@@ -62,8 +62,10 @@ class ChapterParserTest {
             album = null,
             chapters = emptyList(),
             title = null,
-            movementName = "",
-            part=""
+            genre = null,
+            narrator = null,
+            movementName = null,
+            part=null
           )
         }
       },

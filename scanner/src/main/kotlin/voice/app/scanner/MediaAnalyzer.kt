@@ -110,11 +110,11 @@ class MediaAnalyzer(
   ) {
     val metadata = mp4ChapterExtractor.extractMp4Metadata(file.uri)
     builder.chapters += metadata.chapters
+    builder.genre = metadata.genre
+    builder.narrator = metadata.narrator
     builder.movementName = metadata.movementName
     builder.part = metadata.part
-    // todo
-    // builder.part = metadata.part
-    // builder.genre = metadata.genre
+
 
   }
 

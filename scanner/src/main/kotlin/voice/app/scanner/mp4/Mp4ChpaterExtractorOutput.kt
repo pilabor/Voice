@@ -9,9 +9,10 @@ data class Mp4ChpaterExtractorOutput(
   val timeScales: MutableList<Long> = mutableListOf(),
   var chplChapters: List<MarkData> = emptyList(),
   var chapterTrackId: Int? = null,
+  var genre: String? = null,
+  var narrator: String? = null,
   var movementName: String? = null,
   var part: String? = null,
-  var genre: String? = null
 )
 
 data class StscEntry(

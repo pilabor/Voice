@@ -26,6 +26,10 @@ data class BookContent(
   @ColumnInfo(defaultValue = "0")
   val gain: Float,
   @ColumnInfo(defaultValue = "")
+  val genre: String?,
+  @ColumnInfo(defaultValue = "")
+  val narrator: String?,
+  @ColumnInfo(defaultValue = "")
   val movementName: String?,
   @ColumnInfo(defaultValue = "")
   val part: String?,

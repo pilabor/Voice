@@ -3,6 +3,7 @@ package voice.app.scanner.mp4.visitor
 import androidx.media3.common.util.ParsableByteArray
 import dev.zacsweers.metro.Inject
 import voice.app.scanner.mp4.Mp4ChpaterExtractorOutput
+import voice.logging.core.Logger
 import java.nio.ByteBuffer
 
 // import java.nio.ByteBuffer
@@ -40,6 +41,7 @@ class MetaVisitor : AtomVisitor {
   val ratingField = "rtng"
   val ratingField2 = "rate"
   val composerField = "©wrt"
+  val narratorField = "©nrt"
   val descriptionField = "desc"
   val longDescriptionField = "©des"
   val longDescriptionField2 = "ldes"
@@ -65,10 +67,8 @@ class MetaVisitor : AtomVisitor {
   /*
   todo
   { "LANGUAGE", Field.LANGUAGE }, // aka ----:com.apple.iTunes:LANGUAGE
-  { "©isr", Field.ISRC },
   { "CATALOGNUMBER", Field.CATALOG_NUMBER }, // aka ----:com.apple.iTunes:CATALOGNUMBER
   { "LYRICIST", Field.LYRICIST } // aka ----:com.apple.iTunes:LYRICIST
-
    */
 
   var name: String? = null
@@ -81,7 +81,8 @@ class MetaVisitor : AtomVisitor {
   var trackNumberTotal: String? = null
   var diskNumberTotal: String? = null
   var rating: String? = null
-  var composer: String? = null
+  // var composer: String? = null
+  var narrator: String? = null
   var description: String? = null
   var longDescription: String? = null
   var copyright: String? = null
@@ -115,19 +116,21 @@ class MetaVisitor : AtomVisitor {
 
 
     val parentAtom = MetaAtom("meta", buffer.position, buffer.data.size)
-    // try {
+    try {
       parseAtoms(buffer, parentAtom)
-    // } catch(e: Exception) {
-    //  var x = "x"
-    //}
-
-    if(!movementName.isNullOrBlank()) {
-      parseOutput.movementName = movementName
+    } catch(e: Exception) {
+      Logger.e(e, "Could not parse atoms in MetaVisitor")
     }
+
     if(!genre.isNullOrBlank()) {
       parseOutput.genre = genre
     }
-
+    if(!narrator.isNullOrBlank()) {
+      parseOutput.narrator = narrator
+    }
+    if(!movementName.isNullOrBlank()) {
+      parseOutput.movementName = movementName
+    }
     if(!movementIndex.isNullOrBlank()) {
       parseOutput.part = movementIndex
     }
@@ -142,12 +145,7 @@ class MetaVisitor : AtomVisitor {
         break
       }
       val atomSize = buffer.readInt()
-
-      /*
-      val bytes = ByteBuffer.allocate(4)
-      buffer.readBytes(bytes, 4)
-      */
-      val atomName = buffer.readString(4, Charsets.ISO_8859_1)
+      val atomName = buffer.readString(4, Charsets.ISO_8859_1) // this charset is required to correctly read `©`
       val subAtom = MetaAtom(atomName, position, atomSize)
       extractMetaDataField(buffer, parentAtom, atomSize-8)
 
@@ -167,9 +165,11 @@ class MetaVisitor : AtomVisitor {
   ) {
     // parentAtom is named and has a data field
     when (parentAtom.name) {
-      nameField -> name = parseDataAtomString(buffer, size)
-      titleField -> title = parseDataAtomString(buffer, size)
+      // nameField -> name = parseDataAtomString(buffer, size)
+      // titleField -> title = parseDataAtomString(buffer, size)
       genreField -> genre = parseDataAtomString(buffer, size)
+      composerField -> narrator = parseDataAtomString(buffer, size)
+      narratorField -> narrator = parseDataAtomString(buffer, size)
       // genreField2 -> genre = parseDataAtomString(buffer, size) // uint8 genreID, needs mapping table
       movementNameField -> movementName = parseDataAtomString(buffer, size)
       movementIndexField -> movementIndex = parseDataAtomUnsignedByte(buffer).toString()

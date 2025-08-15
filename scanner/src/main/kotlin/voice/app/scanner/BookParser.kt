@@ -75,6 +75,8 @@ class BookParser(
             .takeIf { it.canRead() }
         },
         gain = 0F,
+        genre = analyzed?.genre,
+        narrator = analyzed?.narrator,
         movementName=analyzed?.movementName,
         part = analyzed?.part
         ).also {

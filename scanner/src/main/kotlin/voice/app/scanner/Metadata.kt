@@ -10,6 +10,8 @@ data class Metadata(
   val title: String?,
   val fileName: String,
   val chapters: List<MarkData>,
+  val genre: String?,
+  val narrator: String?,
   val movementName: String? = null,
   val part: String? = null
 ) {
@@ -18,6 +20,8 @@ data class Metadata(
     var artist: String? = null
     var album: String? = null
     var title: String? = null
+    var genre: String? = null
+    var narrator: String? = null
     var movementName: String? = null
     var part: String? = null
     val chapters = mutableListOf<MarkData>()
@@ -44,6 +48,8 @@ data class Metadata(
         title = title ?: fileName,
         fileName = fileName,
         chapters = chapters,
+        genre = genre,
+        narrator = narrator,
         movementName = movementName,
         part = part
       )

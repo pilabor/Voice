@@ -15,6 +15,8 @@ import java.io.IOException
 
 data class Mp4Metadata(
   val chapters: List<MarkData>,
+  val genre: String? = null,
+  val narrator: String? = null,
   val movementName:String? = null,
   val part:String?=null,
 )
@@ -44,7 +46,12 @@ class Mp4ChapterExtractor(
         else -> emptyList()
       }
 
-      m = Mp4Metadata(chapters, topLevelResult.movementName, topLevelResult.part)
+      m = Mp4Metadata(
+        chapters,
+        topLevelResult.genre,
+        topLevelResult.narrator,
+        topLevelResult.movementName,
+        topLevelResult.part)
     } catch (e: IOException) {
       Logger.w(e, "Failed to open MP4 file for chapter extraction")
     } catch (e: SecurityException) {

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 56,
-    "identityHash": "55125b2fc3d43e99d4304127df67752f",
+    "identityHash": "837cb975fef8cef19d1871bff00beb55",
     "entities": [
       {
         "tableName": "bookmark",
@@ -420,7 +420,7 @@
       },
       {
         "tableName": "bookSearchFts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `author` TEXT, `id` TEXT NOT NULL, `isActive` INTEGER NOT NULL, tokenize=unicode61, content=`content2`, notindexed=`id`, notindexed=`isActive`)",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`name` TEXT NOT NULL, `author` TEXT, `movementName` TEXT, `part` TEXT, `id` TEXT NOT NULL, `isActive` INTEGER NOT NULL, tokenize=unicode61, content=`content2`, notindexed=`id`, notindexed=`isActive`)",
         "fields": [
           {
             "fieldPath": "name",
@@ -431,6 +431,16 @@
           {
             "fieldPath": "author",
             "columnName": "author",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "movementName",
+            "columnName": "movementName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "part",
+            "columnName": "part",
             "affinity": "TEXT"
           },
           {
@@ -467,8 +477,8 @@
         "contentSyncTriggers": [
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_BEFORE_UPDATE BEFORE UPDATE ON `content2` BEGIN DELETE FROM `bookSearchFts` WHERE `docid`=OLD.`rowid`; END",
           "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_BEFORE_DELETE BEFORE DELETE ON `content2` BEGIN DELETE FROM `bookSearchFts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_UPDATE AFTER UPDATE ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`id`, NEW.`isActive`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_INSERT AFTER INSERT ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`id`, NEW.`isActive`); END"
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_UPDATE AFTER UPDATE ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `movementName`, `part`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`movementName`, NEW.`part`, NEW.`id`, NEW.`isActive`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_bookSearchFts_AFTER_INSERT AFTER INSERT ON `content2` BEGIN INSERT INTO `bookSearchFts`(`docid`, `name`, `author`, `movementName`, `part`, `id`, `isActive`) VALUES (NEW.`rowid`, NEW.`name`, NEW.`author`, NEW.`movementName`, NEW.`part`, NEW.`id`, NEW.`isActive`); END"
         ]
       },
       {
@@ -492,7 +502,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '55125b2fc3d43e99d4304127df67752f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '837cb975fef8cef19d1871bff00beb55')"
     ]
   }
 }
