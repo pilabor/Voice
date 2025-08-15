@@ -150,7 +150,12 @@ internal fun ListBookRow(
 }
 
 private fun buildSeriesLine(book: BookOverviewItemViewState) : String? {
-  return listOf(book.movementName, "#${book.part ?: ""}".trim().trimEnd('#')).filter { it -> !it.isNullOrBlank() }.joinToString(" ")
+
+  val seriesLine = listOf(book.movementName, "#${book.part ?: ""}".trim().trimEnd('#')).filter { it -> !it.isNullOrBlank() }.joinToString(" ")
+  if(seriesLine.length > 40) {
+    return seriesLine.substring(0,18) + "..." + seriesLine.substring(seriesLine.length - 18)
+  }
+  return seriesLine
 }
 
 @Composable
