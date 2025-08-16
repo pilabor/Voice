@@ -1,7 +1,9 @@
 package voice.app.scanner.mp4.visitor
 
 import androidx.media3.common.util.ParsableByteArray
+import androidx.media3.container.Mp4Box
 import dev.zacsweers.metro.Inject
+import okio.ByteString.Companion.toByteString
 import voice.app.scanner.mp4.Mp4ChpaterExtractorOutput
 import voice.logging.core.Logger
 import java.nio.ByteBuffer
@@ -175,14 +177,24 @@ class MetaVisitor : AtomVisitor {
   }
 
   private fun parseCustomField(buffer: ParsableByteArray, size: Int) {
+    /*
     // val bufferStartPos = buffer.position
+    val scratchBuffer = ByteBuffer.allocate(size)
+    buffer.readBytes(scratchBuffer, size)
+    val scratch = ParsableByteArray(scratchBuffer.array())
+    */
+
+
 
 
     // buffer.position = bufferStartPos
     // parseFlags(buffer)
-    val nameSpace = buffer.readString(size)
+    var nullBytes = buffer.readString(4)
+    val nameSpace = buffer.readString(size-4)
     val propertyNameWidth = buffer.readInt()
-    val propertyName = buffer.readString(propertyNameWidth - 4).substring(4)
+    val nameBytes = buffer.readString(4)
+    nullBytes = buffer.readString(4)
+    val propertyName = buffer.readString(propertyNameWidth - 12) // 4=nameWidth + 4=nameBytes + 4=nullBytes
     val propertyValueWidth = buffer.readInt()
     val dataAtom = buffer.readString(4)
     parseFlags(buffer)
