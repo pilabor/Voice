@@ -200,7 +200,9 @@ dependencies {
   debugImplementation(libs.leakcanary.android)
 
   implementation(libs.media3.exoplayer)
-  implementation(libs.media3.session)
+  // implementation(libs.media3.session)
+  // implementation(files("../../../media/libraries/session/buildout/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar"))
+  implementation(files("../../../media/libraries/session/buildout/intermediates/full_jar/release/createFullJarRelease/full.jar"))
 
   implementation(libs.conductor)
 
