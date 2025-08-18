@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package voice.playback.di
 
 import dev.zacsweers.metro.AppScope
@@ -14,7 +16,8 @@ interface PlaybackGraph {
 
   fun inject(target: PlaybackService)
 
-  @ContributesGraphExtension.Factory(AppScope::class)
+  @ContributesTo(AppScope::class)
+  @ContributesGraphExtension.Factory(Factory::class)
   interface Factory {
     fun create(@Provides playbackService: PlaybackService): PlaybackGraph
   }

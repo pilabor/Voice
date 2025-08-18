@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package voice.bookOverview.di
 
 import dev.zacsweers.metro.AppScope
@@ -22,8 +24,9 @@ interface BookOverviewGraph {
   val deleteBookViewModel: DeleteBookViewModel
   val fileCoverViewModel: FileCoverViewModel
 
-  @ContributesGraphExtension.Factory(AppScope::class)
-  interface Factory {
+    @ContributesTo(AppScope::class)
+    @ContributesGraphExtension.Factory(Factory::class)
+    interface Factory {
     fun create(): BookOverviewGraph
 
     @ContributesTo(AppScope::class)

@@ -13,7 +13,7 @@ android {
 metro {
   // necessary as SleepTimer is scoped to AppScope and used in the PlaybackScope.
   // without this, compilation will fail.
-  enableScopedInjectClassHints.set(true)
+//  enableScopedInjectClassHints.set(true)
 }
 
 dependencies {
@@ -27,9 +27,9 @@ dependencies {
   implementation(libs.coroutines.guava)
   implementation(libs.serialization.json)
 
+  implementation("androidx.media:media:1.7.1")
   implementation(libs.media3.exoplayer)
-  // implementation(files("../../../media/libraries/session/buildout/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar"))
-  implementation(files("../../../media/libraries/session/buildout/intermediates/full_jar/release/createFullJarRelease/full.jar"))
+  implementation(files("../../../media/libraries/session/buildout/outputs/aar/lib-session-debug.aar"))
 
   // implementation(libs.media3.session)
 

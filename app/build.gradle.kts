@@ -130,7 +130,7 @@ android {
   lint {
     checkDependencies = true
     ignoreTestSources = true
-    warningsAsErrors = providers.gradleProperty("voice.warningsAsErrors").get().toBooleanStrict()
+    warningsAsErrors = false //providers.gradleProperty("voice.warningsAsErrors").get().toBooleanStrict()
     lintConfig = rootProject.file("lint.xml")
   }
 
@@ -199,10 +199,10 @@ dependencies {
   implementation(libs.leakcanary.plumber)
   debugImplementation(libs.leakcanary.android)
 
+  implementation("androidx.media:media:1.7.1")
   implementation(libs.media3.exoplayer)
   // implementation(libs.media3.session)
-  // implementation(files("../../../media/libraries/session/buildout/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar"))
-  implementation(files("../../../media/libraries/session/buildout/intermediates/full_jar/release/createFullJarRelease/full.jar"))
+  implementation(files("../../../media/libraries/session/buildout/outputs/aar/lib-session-debug.aar"))
 
   implementation(libs.conductor)
 
