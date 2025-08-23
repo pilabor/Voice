@@ -18,10 +18,10 @@ dependencies {
   implementation(libs.appCompat)
   implementation(libs.material)
   api(libs.immutable)
-  api(libs.conductor)
   api(libs.datastore)
   implementation(libs.androidxCore)
-  implementation(libs.viewBinding)
+  api(libs.navigation3.runtime)
+  implementation(libs.lifecycle.viewmodel.compose)
   implementation(libs.serialization.json)
 
   testImplementation(libs.junit)
