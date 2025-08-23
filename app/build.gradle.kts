@@ -142,7 +142,6 @@ android {
   }
 
   buildFeatures {
-    viewBinding = true
     buildConfig = true
   }
 }
@@ -170,6 +169,8 @@ dependencies {
   implementation(libs.material)
   implementation(libs.datastore)
   implementation(libs.appStartup)
+
+  implementation(libs.navigation3.ui)
 
   implementation(libs.serialization.json)
 
@@ -201,8 +202,6 @@ dependencies {
 
   implementation(libs.media3.exoplayer)
   implementation(libs.media3.session)
-
-  implementation(libs.conductor)
 
   testImplementation(libs.androidX.test.runner)
   testImplementation(libs.androidX.test.junit)

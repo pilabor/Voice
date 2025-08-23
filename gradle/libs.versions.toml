@@ -13,7 +13,7 @@ room = "2.7.2"
 materialDialog = "3.3.0"
 kotlin = "2.2.10"
 media3 = "1.8.0"
-agp = "8.12.0"
+agp = "8.12.1"
 ktlint-core = "1.7.1"
 ktlint-gradlePlugin = "0.11.0"
 retrofit = "3.0.0"
@@ -37,10 +37,9 @@ androidxCore = "androidx.core:core-ktx:1.17.0"
 kotlin-pluginForGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 desugar = "com.android.tools:desugar_jdk_libs:2.1.5"
 documentFile = "androidx.documentfile:documentfile:1.1.0"
-koTest-assert = "io.kotest:kotest-assertions-core:5.9.1"
+koTest-assert = "io.kotest:kotest-assertions-core:6.0.0"
 datastore = "androidx.datastore:datastore-preferences:1.1.7"
 seismic = "com.squareup:seismic:1.0.3"
-viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp" }
 appStartup = "androidx.startup:startup-runtime:1.2.0"
 turbine = "app.cash.turbine:turbine:1.2.1"
 molecule = "app.cash.molecule:molecule-runtime:2.1.0"
@@ -76,8 +75,6 @@ androidX-test-rules = "androidx.test:rules:1.7.0"
 androidX-test-services = "androidx.test.services:test-services:1.6.0"
 androidX-test-orchestrator = "androidx.test:orchestrator:1.6.1"
 
-conductor = "com.bluelinelabs:conductor:4.0.0-preview-4"
-
 materialDialog-core = { module = "com.afollestad.material-dialogs:core", version.ref = "materialDialog" }
 materialDialog-input = { module = "com.afollestad.material-dialogs:input", version.ref = "materialDialog" }
 
@@ -87,8 +84,9 @@ media3-testUtils-core = { module = "androidx.media3:media3-test-utils", version.
 media3-testUtils-robolectric = { module = "androidx.media3:media3-test-utils-robolectric", version.ref = "media3" }
 
 lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.9.2"
+lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2"
 
-compose-bom = "androidx.compose:compose-bom:2025.07.00"
+compose-bom = "androidx.compose:compose-bom:2025.08.00"
 compose-ui-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling-core = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
@@ -103,8 +101,9 @@ compose-animation-graphics = { module = "androidx.compose.animation:animation-gr
 compose-animation-animation = { module = "androidx.compose.animation:animation" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-activity = "androidx.activity:activity-compose:1.10.1"
-compose-navigation = "androidx.navigation:navigation-compose:2.9.3"
-compose-typedNavigation = "com.kiwi.navigation-compose.typed:core:0.10.0"
+navigation3-ui = "androidx.navigation3:navigation3-ui:1.0.0-alpha07"
+navigation3-runtime = "androidx.navigation3:navigation3-runtime:1.0.0-alpha07"
+
 
 ktlint-core = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint-core" }
 ktlint-gradlePlugin = { module = "io.github.usefulness:ktlint-gradle-plugin", version.ref = "ktlint-gradlePlugin" }
@@ -115,7 +114,6 @@ compose = [
   "compose-ui-ui",
   "compose-ui-tooling-preview",
   "compose-foundation",
-  "compose-navigation",
   "compose-material-icons-core",
   "compose-material-icons-extended",
   "compose-animation-graphics",
@@ -123,7 +121,6 @@ compose = [
   "androidxCore",
   "compose-material3",
   "compose-activity",
-  "compose-typedNavigation",
   "coil",
 ]
 
@@ -154,7 +151,7 @@ googleServices = { id = "com.google.gms.google-services", version = "4.4.3" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.2.0-2.0.2" }
+ksp = { id = "com.google.devtools.ksp", version = "2.2.10-2.0.2" }
 ktlint = { id = "io.github.usefulness.ktlint-gradle-plugin", version.ref = "ktlint-gradlePlugin" }
 playPublish = { id = "com.github.triplet.play", version = "3.12.1" }
-metro = { id = "dev.zacsweers.metro", version = "0.5.5" }
+metro = { id = "dev.zacsweers.metro", version = "0.6.2" }

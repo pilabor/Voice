@@ -2,7 +2,7 @@ package voice.common.navigation
 
 import android.content.Intent
 import android.net.Uri
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import voice.common.BookId
 import voice.common.serialization.UriSerializer
@@ -10,12 +10,15 @@ import voice.common.serialization.UriSerializer
 sealed interface NavigationCommand {
   data object GoBack : NavigationCommand
   data class GoTo(val destination: Destination) : NavigationCommand
-  data class Execute(val action: (NavController) -> Unit) : NavigationCommand
+
+  data class SetRoot(val root: Destination.Compose) : NavigationCommand
 }
 
 sealed interface Destination {
-  data class Playback(val bookId: BookId) : Destination
-  data class Bookmarks(val bookId: BookId) : Destination
+
+  @Serializable
+  data class Playback(val bookId: BookId) : Compose
+  data class Bookmarks(val bookId: BookId) : Compose
 
   @Serializable
   data class CoverFromInternet(val bookId: BookId) : Compose
@@ -23,14 +26,14 @@ sealed interface Destination {
   data class EditCover(
     val bookId: BookId,
     val cover: Uri,
-  ) : Destination
+  ) : Compose
 
   data class Activity(val intent: Intent) : Destination
 
   @Serializable
   sealed interface Compose :
     Destination,
-    com.kiwi.navigationcompose.typed.Destination
+    NavKey
 
   @Serializable
   data object Migration : Compose
@@ -66,6 +69,8 @@ sealed interface Destination {
 
   @Serializable
   data object OnboardingExplanation : Compose
+
+  data object BatteryOptimization : Destination
 
   @Serializable
   data class AddContent(val mode: Mode) : Compose {
